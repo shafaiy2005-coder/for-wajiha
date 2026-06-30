@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Wajiha</title>
+<style>
+  :root {
+    --blush: #fff0f5;
+    --rose: #ff6fa3;
+    --deep-rose: #d6336c;
+    --plum: #4a1942;
+    --gold: #f6c453;
+    --cream: #fff8f3;
+    --ink: #3a1730;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    background: linear-gradient(160deg, var(--blush), #ffe1ee 60%, #ffd3e6);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .screen {
+    display: none;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    position: relative;
+    text-align: center;
+  }
+  .screen.active { display: flex; }
+
+  /* floating petals */
+  .petal {
+    position: fixed;
+    top: -40px;
+    font-size: 22px;
+    opacity: 0.7;
+    pointer-events: none;
+    animation: fall linear infinite;
+    z-index: 0;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+  }
+
+  .eyebrow {
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--deep-rose);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin-bottom: 18px;
+    z-index: 1;
+  }
+
+  h1 {
+    font-size: clamp(2.4rem, 7vw, 4.6rem);
+    color: var(--deep-rose);
+    font-weight: 400;
+    line-height: 1.05;
+    z-index: 1;
+  }
+  h1 .script {
+    font-family: 'Brush Script MT', cursive;
+    color: var(--plum);
+    display: block;
+    font-size: clamp(3.2rem, 10vw, 6rem);
+    margin-top: 6px;
+  }
+
+  p.lead {
+    max-width: 520px;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 22px 0 34px;
+    z-index: 1;
+  }
+
+  .btn {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 16px 38px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: var(--deep-rose);
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(214,51,108,0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 1;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(214,51,108,0.45); }
+  .btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  .btn.ghost {
+    background: transparent;
+    border: 1.5px solid var(--deep-rose);
+    color: var(--deep-rose);
+    box-shadow: none;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--deep-rose);
+    opacity: 0.5;
+    margin: 26px 0;
+    z-index: 1;
+  }
+
+  /* INTRO PAGE */
+  .intro-card {
+    max-width: 560px;
+    z-index: 1;
+  }
+  .intro-card .num {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.8rem;
+    color: var(--rose);
+    letter-spacing: 0.2em;
+  }
+
+  /* INVITE PAGE */
+  .invite-card {
+    background: #fffafc;
+    border: 1px solid rgba(214,51,108,0.18);
+    border-radius: 28px;
+    padding: 56px 48px;
+    max-width: 540px;
+    box-shadow: 0 30px 60px rgba(214,51,108,0.15);
+    z-index: 1;
+    position: relative;
+  }
+  .invite-buttons {
+    display: flex;
+    gap: 22px;
+    justify-content: center;
+    margin-top: 36px;
+    position: relative;
+    flex-wrap: wrap;
+  }
+  #noBtn {
+    position: relative;
+    transition: transform 0.18s ease-out, left 0.18s ease-out, top 0.18s ease-out;
+  }
+  #noBtn.escaping {
+    position: fixed;
+  }
+
+  /* SELECTION SCREENS (date/dish/place) */
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 18px;
+    max-width: 640px;
+    width: 100%;
+    margin: 10px 0 38px;
+    z-index: 1;
+  }
+  .option {
+    background: #fff;
+    border: 1.5px solid rgba(214,51,108,0.2);
+    border-radius: 18px;
+    padding: 22px 16px;
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    transition: all 0.2s ease;
+  }
+  .option .opt-emoji { font-size: 1.8rem; display:block; margin-bottom:8px; }
+  .option .opt-title { font-weight: 600; color: var(--plum); font-size: 1rem; }
+  .option .opt-sub { font-size: 0.78rem; color: #a16; opacity: 0.7; margin-top:4px; }
+  .option:hover { border-color: var(--rose); transform: translateY(-3px); box-shadow: 0 10px 24px rgba(214,51,108,0.18); }
+  .option.selected {
+    background: var(--deep-rose);
+    border-color: var(--deep-rose);
+  }
+  .option.selected .opt-title, .option.selected .opt-sub { color: #fff; }
+
+  .step-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 8px;
+    z-index: 1;
+  }
+
+  /* FINAL SCREEN */
+  .summary-card {
+    background: #fffafc;
+    border-radius: 28px;
+    padding: 50px 44px;
+    max-width: 500px;
+    box-shadow: 0 30px 60px rgba(214,51,108,0.18);
+    z-index: 1;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px dashed rgba(214,51,108,0.25);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.95rem;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { color: #a16; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; }
+  .summary-row .value { color: var(--plum); font-weight: 600; }
+
+  .heart-loader { font-size: 2.4rem; animation: pulse 1.3s ease-in-out infinite; z-index:1; }
+  @keyframes pulse { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.18);} }
+
+  input[type="date"] {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.1rem;
+    padding: 14px 20px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(214,51,108,0.3);
+    background: #fff;
+    color: var(--plum);
+    margin-bottom: 30px;
+    z-index: 1;
+  }
+
+  .progress-dots {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 30px;
+    z-index: 1;
+  }
+  .progress-dots span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(214,51,108,0.25);
+  }
+  .progress-dots span.on { background: var(--deep-rose); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .petal { animation: none; display:none; }
+    .heart-loader { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="petals"></div>
+
+<!-- SCREEN 0: NAME -->
+<section class="screen active" id="screen-0">
+  <div class="eyebrow">an invitation crafted by Mustafa</div>
+  <h1>Hey<span class="script">Wajiha</span></h1>
+  <div class="divider"></div>
+  <p class="lead">I made you a little something. It only takes a minute to open — and I promise it ends with food.</p>
+  <button class="btn" onclick="goTo(1)">Open it</button>
+</section>
+
+<!-- SCREEN 1: INTRO -->
+<section class="screen" id="screen-1">
+  <div class="intro-card">
+    <div class="num">BEFORE WE GET TO IT</div>
+    <h1 style="font-size: clamp(1.8rem,5vw,2.6rem); margin-top:14px;">A quick word first</h1>
+    <p class="lead">There's a place I've been wanting to take you, and a date I've been carrying around in my head for a few days now. So I figured — instead of just asking — I'd build you the whole thing properly. Keep going, it gets better.</p>
+    <button class="btn" onclick="goTo(2)">Keep going</button>
+  </div>
+</section>
+
+<!-- SCREEN 2: INVITE -->
+<section class="screen" id="screen-2">
+  <div class="step-label">The Ask</div>
+  <div class="invite-card">
+    <h1 style="font-size: clamp(1.8rem,5vw,2.4rem);">Wajiha, will you have a meal with me?</h1>
+    <p class="lead" style="margin-bottom:0;">Just us, good food, and however long the conversation wants to run.</p>
+    <div class="invite-buttons" id="inviteButtons">
+      <button class="btn" onclick="goTo(3)">Yes, I'd love to</button>
+      <button class="btn ghost" id="noBtn" onmouseenter="dodge()" ontouchstart="dodge(event)">No</button>
+    </div>
+  </div>
+</section>
+
+<!-- SCREEN 3: DATE -->
+<section class="screen" id="screen-3">
+  <div class="progress-dots"><span class="on"></span><span></span><span></span><span></span></div>
+  <div class="step-label">Step 1 of 3</div>
+  <h1 style="font-size: clamp(1.8rem,5vw,2.4rem);">Pick the day</h1>
+  <p class="lead" style="margin-bottom:14px;">Whenever suits you — I'll make it work.</p>
+  <input type="date" id="datePick">
+  <div>
+    <button class="btn" onclick="confirmDate()">Continue</button>
+  </div>
+</section>
+
+<!-- SCREEN 4: DISH -->
+<section class="screen" id="screen-4">
+  <div class="progress-dots"><span class="on"></span><span class="on"></span><span></span><span></span></div>
+  <div class="step-label">Step 2 of 3</div>
+  <h1 style="font-size: clamp(1.8rem,5vw,2.4rem);">What are you in the mood for?</h1>
+  <div class="option-grid" id="dishGrid">
+    <div class="option" data-val="Pasta & Italian">
+      <span class="opt-emoji">🍝</span>
+      <div class="opt-title">Pasta & Italian</div>
+      <div class="opt-sub">candlelight, carbs, comfort</div>
+    </div>
+    <div class="option" data-val="BBQ & Karahi">
+      <span class="opt-emoji">🍢</span>
+      <div class="opt-title">BBQ & Karahi</div>
+      <div class="opt-sub">smoky, spicy, shared plates</div>
+    </div>
+    <div class="option" data-val="Sushi & Asian">
+      <span class="opt-emoji">🍣</span>
+      <div class="opt-title">Sushi & Asian</div>
+      <div class="opt-sub">light, sharp flavors</div>
+    </div>
+    <div class="option" data-val="Dessert & Cafe">
+      <span class="opt-emoji">🍰</span>
+      <div class="opt-title">Dessert & Café</div>
+      <div class="opt-sub">coffee, cake, slow talk</div>
+    </div>
+  </div>
+  <button class="btn" id="dishContinue" style="opacity:0.4; pointer-events:none;" onclick="goTo(5)">Continue</button>
+</section>
+
+<!-- SCREEN 5: PLACE -->
+<section class="screen" id="screen-5">
+  <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+  <div class="step-label">Step 3 of 3</div>
+  <h1 style="font-size: clamp(1.8rem,5vw,2.4rem);">Pick the vibe</h1>
+  <div class="option-grid" id="placeGrid">
+    <div class="option" data-val="Cozy & Quiet">
+      <span class="opt-emoji">🕯️</span>
+      <div class="opt-title">Cozy & Quiet</div>
+      <div class="opt-sub">low light, soft seats</div>
+    </div>
+    <div class="option" data-val="Rooftop View">
+      <span class="opt-emoji">🌆</span>
+      <div class="opt-title">Rooftop View</div>
+      <div class="opt-sub">city skyline, open air</div>
+    </div>
+    <div class="option" data-val="Lively & Fun">
+      <span class="opt-emoji">🎶</span>
+      <div class="opt-title">Lively & Fun</div>
+      <div class="opt-sub">music, energy, buzz</div>
+    </div>
+    <div class="option" data-val="By the Water">
+      <span class="opt-emoji">🌊</span>
+      <div class="opt-title">By the Water</div>
+      <div class="opt-sub">sea breeze, golden hour</div>
+    </div>
+  </div>
+  <button class="btn" id="placeContinue" style="opacity:0.4; pointer-events:none;" onclick="finish()">See the summary</button>
+</section>
+
+<!-- SCREEN 6: SUMMARY -->
+<section class="screen" id="screen-6">
+  <div class="heart-loader">💗</div>
+  <h1 style="font-size: clamp(1.8rem,5vw,2.4rem); margin-top:18px;">It's settled, then</h1>
+  <p class="lead" style="margin-bottom:24px;">Here's what we've got — I'll handle the rest.</p>
+  <div class="summary-card">
+    <div class="summary-row"><span class="label">With</span><span class="value">Mustafa &amp; Wajiha</span></div>
+    <div class="summary-row"><span class="label">Date</span><span class="value" id="sumDate">—</span></div>
+    <div class="summary-row"><span class="label">Cuisine</span><span class="value" id="sumDish">—</span></div>
+    <div class="summary-row"><span class="label">Vibe</span><span class="value" id="sumPlace">—</span></div>
+  </div>
+  <p class="lead" style="margin-top:30px; margin-bottom:0; font-size:1rem;">Can't wait, Wajiha. 🌸</p>
+</section>
+
+<script>
+  // floating petals background
+  const petalEmojis = ['🌸','💮','🌷'];
+  const petalContainer = document.getElementById('petals');
+  for (let i=0;i<14;i++){
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = petalEmojis[Math.floor(Math.random()*petalEmojis.length)];
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.animationDuration = (8 + Math.random()*10) + 's';
+    p.style.animationDelay = (Math.random()*10) + 's';
+    p.style.fontSize = (16 + Math.random()*14) + 'px';
+    petalContainer.appendChild(p);
+  }
+
+  let chosenDate = null, chosenDish = null, chosenPlace = null;
+
+  function goTo(n){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('screen-'+n).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  // dodging "No" button
+  function dodge(e){
+    const btn = document.getElementById('noBtn');
+    if (!btn.classList.contains('escaping')) {
+      const rect = btn.getBoundingClientRect();
+      btn.style.width = rect.width + 'px';
+      btn.classList.add('escaping');
+      btn.style.left = rect.left + 'px';
+      btn.style.top = rect.top + 'px';
+    }
+    const maxX = window.innerWidth - 140;
+    const maxY = window.innerHeight - 70;
+    const newX = Math.max(20, Math.random()*maxX);
+    const newY = Math.max(20, Math.random()*maxY);
+    btn.style.left = newX + 'px';
+    btn.style.top = newY + 'px';
+  }
+
+  function confirmDate(){
+    const val = document.getElementById('datePick').value;
+    if(!val){ alert('Pick a date first 🌸'); return; }
+    const d = new Date(val + 'T00:00:00');
+    chosenDate = d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    goTo(4);
+  }
+
+  function setupGrid(gridId, onPick){
+    const grid = document.getElementById(gridId);
+    grid.querySelectorAll('.option').forEach(opt=>{
+      opt.addEventListener('click', ()=>{
+        grid.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+        opt.classList.add('selected');
+        onPick(opt.dataset.val);
+      });
+    });
+  }
+
+  setupGrid('dishGrid', (val)=>{
+    chosenDish = val;
+    const btn = document.getElementById('dishContinue');
+    btn.style.opacity = 1;
+    btn.style.pointerEvents = 'auto';
+  });
+
+  setupGrid('placeGrid', (val)=>{
+    chosenPlace = val;
+    const btn = document.getElementById('placeContinue');
+    btn.style.opacity = 1;
+    btn.style.pointerEvents = 'auto';
+  });
+
+  function finish(){
+    document.getElementById('sumDate').textContent = chosenDate || '—';
+    document.getElementById('sumDish').textContent = chosenDish || '—';
+    document.getElementById('sumPlace').textContent = chosenPlace || '—';
+    goTo(6);
+  }
+</script>
+
+</body>
+</html>
